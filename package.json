@@ -1,16 +1,46 @@
 {
-  "name": "mcp-server-minimal",
+  "name": "@unsuredev/mcp-server-minimal",
   "version": "1.0.0",
-  "scripts": {
-    "start": "tsx src/mcp-server-minimal.ts --stdio",
-    "start-stdout": "tsx src/mcp-server-minimal.ts --stdio",
-    "start-sse": "tsx src/mcp-server-minimal.ts --sse",
-    "start-http": "tsx src/mcp-server-minimal.ts --http"
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/markabrahams/mcp-server-minimal.git"
   },
-  "keywords": [],
-  "author": "",
+  "homepage": "https://github.com/markabrahams/mcp-server-minimal#readme",
+  "bugs": {
+    "url": "https://github.com/markabrahams/mcp-server-minimal/issues"
+  },
+  "bin": {
+    "mcp-server-minimal": "./dist/mcp-server-minimal-http.js",
+    "mcp-server-minimal-stdio": "./dist/mcp-server-minimal-stdio.js",
+    "mcp-server-minimal-http": "./dist/mcp-server-minimal-http.js",
+    "mcp-server-minimal-sse": "./dist/mcp-server-minimal-sse.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
+    "start": "tsx src/mcp-server-minimal-http.ts",
+    "start-stdio": "tsx src/mcp-server-minimal-stdio.ts",
+    "start-sse": "tsx src/mcp-server-minimal-sse.ts",
+    "start-http": "tsx src/mcp-server-minimal-http.ts"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "mcp-server",
+    "ai",
+    "claude",
+    "anthropic",
+    "stdio",
+    "http",
+    "sse"
+  ],
+  "author": "Mark Abrahams",
   "license": "ISC",
-  "description": "",
+  "description": "Minimal MCP servers",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.20.2",
     "express": "^5.2.1"

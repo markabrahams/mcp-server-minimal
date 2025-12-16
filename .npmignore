@@ -1,0 +1,44 @@
+# Source files (compiled versions in dist/)
+src/
+*.ts
+!*.d.ts
+
+# Build configuration
+tsconfig.json
+
+# Dependencies
+node_modules/
+
+# Development files
+.vscode/
+.idea/
+*.log
+npm-debug.log*
+.DS_Store
+
+# Testing
+coverage/
+*.test.js
+*.spec.js
+
+# Environment and secrets
+.env
+.env.*
+*.key
+*.pem
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Editor artifacts
+*~
+*.swp
+*.swo
+
