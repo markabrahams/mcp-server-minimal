@@ -1,6 +1,6 @@
 {
-  "name": "@unsuredev/mcp-server-minimal",
-  "version": "1.0.0",
+  "name": "mcp-server-minimal",
+  "version": "1.0.1",
   "type": "module",
   "repository": {
     "type": "git",

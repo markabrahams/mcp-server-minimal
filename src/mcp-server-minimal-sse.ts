@@ -48,13 +48,19 @@ const sseTransports = new Map<string, SSEServerTransport>();
 // Handle SSE connections - each connection gets its own transport
 app.get('/sse', async (req, res) => {
     console.log('SSE client connected');
+    
+    // Create transport - it will automatically append sessionId to the endpoint
     const transport = new SSEServerTransport('/message', res);
-    await mcpServer.connect(transport);
-
+    
     // Store transport by session ID for routing POST messages
     const sessionId = transport.sessionId;
     sseTransports.set(sessionId, transport);
     console.log(`Session ${sessionId} created`);
+
+    // Connect the MCP server to the transport
+    // Note: connect() calls start() automatically, which sends the endpoint event
+    await mcpServer.connect(transport);
+    console.log(`Sent endpoint URL to client: /message?sessionId=${sessionId}`);
 
     // Clean up when connection closes
     res.on('close', () => {
@@ -65,22 +71,28 @@ app.get('/sse', async (req, res) => {
 
 // Handle POST messages from SSE clients
 app.post('/message', async (req, res) => {
-    // Find the transport for this message
-    // The client should include the session ID in the URL or headers
-    // For simplicity, try all transports (works for single client)
-    let handled = false;
-    for (const transport of sseTransports.values()) {
-        try {
-            await transport.handlePostMessage(req, res, req.body);
-            handled = true;
-            break;
-        } catch (err) {
-            // This transport couldn't handle it, try next
-        }
+    // Extract session ID from query parameters (legacy MCP SSE pattern)
+    const sessionId = req.query.sessionId as string;
+    
+    if (!sessionId) {
+        return res.status(400).json({ error: 'Missing sessionId query parameter' });
     }
 
-    if (!handled) {
-        res.status(404).json({ error: 'No active SSE session found' });
+    // Look up the transport for this session
+    const transport = sseTransports.get(sessionId);
+    
+    if (!transport) {
+        return res.status(404).json({ error: `Session ${sessionId} not found or expired` });
+    }
+
+    // Route the message to the correct transport
+    try {
+        await transport.handlePostMessage(req, res, req.body);
+    } catch (err) {
+        console.error(`Error handling message for session ${sessionId}:`, err);
+        if (!res.headersSent) {
+            res.status(500).json({ error: 'Internal server error' });
+        }
     }
 });
 
